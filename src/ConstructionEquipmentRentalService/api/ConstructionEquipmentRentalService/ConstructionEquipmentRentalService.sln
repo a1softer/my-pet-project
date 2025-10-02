@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConstructionEquipmentRentalService", "ConstructionEquipmentRentalService\ConstructionEquipmentRentalService.csproj", "{6A67EACF-8B5B-49AB-91B3-DEB034EA4211}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "..\..\domain\Domain\Domain.csproj", "{E9591F36-D357-4E82-9832-0EE727DE9C6B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A67EACF-8B5B-49AB-91B3-DEB034EA4211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A67EACF-8B5B-49AB-91B3-DEB034EA4211}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A67EACF-8B5B-49AB-91B3-DEB034EA4211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A67EACF-8B5B-49AB-91B3-DEB034EA4211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9591F36-D357-4E82-9832-0EE727DE9C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9591F36-D357-4E82-9832-0EE727DE9C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9591F36-D357-4E82-9832-0EE727DE9C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9591F36-D357-4E82-9832-0EE727DE9C6B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9BB6FD64-7CED-4BFF-AC1C-254295F614CB}
+	EndGlobalSection
+EndGlobal

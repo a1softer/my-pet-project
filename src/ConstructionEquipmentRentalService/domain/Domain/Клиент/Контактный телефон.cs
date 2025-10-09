@@ -1,8 +1,13 @@
-﻿namespace Domain.Клиент
+﻿using System.Text.RegularExpressions;
+
+namespace Domain.Клиент
 {
     public record Контактный_телефон
     {
         public string Номер { get; }
+
+        // Статическое регулярное выражение для производительности
+        private static readonly Regex _phoneValidationRegex = new Regex(@"\B[+]\d\s[(]\d{3}[)]\s\d{3}\s\d{2}[-]\d{2}\b", RegexOptions.Compiled);
 
         private Контактный_телефон(string номер)
         {
@@ -14,16 +19,20 @@
             if (string.IsNullOrWhiteSpace(номер))
                 throw new ArgumentException("Контактный телефон не может быть пустым.");
 
-            // Проверка формата: +7XXXYYYYYYY (11 цифр)
-            string очищенныйНомер = new string(номер.Where(char.IsDigit).ToArray());
+            //Проверка на минимальную длину
+            if (номер.Length < 10)
+                throw new ArgumentException("Номер телефона слишком короткий.");
 
-            if (очищенныйНомер.Length != 11)
-                throw new ArgumentException("Контактный телефон должен содержать 11 цифр.");
+            // Проверка на максимальную длину
+            if (номер.Length > 20)
+                throw new ArgumentException("Номер телефон слишком длинный.");
 
-            if (!очищенныйНомер.StartsWith("7"))
-                throw new ArgumentException("Контактный телефон должен начинаться с 7.");
+            // Проверка формата с помощью регулярного выражения
+            Match match = _phoneValidationRegex.Match(номер);
+            if (!match.Success)
+                throw new ArgumentException("Номер телефона имеет некорректный формат. Используйте формата: +7 (123) 456 78-90");
 
-            return new Контактный_телефон(очищенныйНомер);
+            return new Контактный_телефон(номер);
         }
     }
 }

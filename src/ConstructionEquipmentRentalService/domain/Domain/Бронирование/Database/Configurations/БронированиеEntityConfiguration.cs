@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Domain.Бронирование.Database.Configurations;
+namespace Domain.Booking.Database.Configurations;
 
-public sealed class БронированиеEntityConfiguration : IEntityTypeConfiguration<global::Domain.Booking.Бронирование>
+public sealed class БронированиеEntityConfiguration : IEntityTypeConfiguration<Бронирование>
 {
-    public void Configure(EntityTypeBuilder<global::Domain.Booking.Бронирование> builder)
+    public void Configure(EntityTypeBuilder<Бронирование> builder)
     {
         builder.ToTable("bookings");
 
@@ -15,14 +15,14 @@ public sealed class БронированиеEntityConfiguration : IEntityTypeCon
             .HasColumnName("id")
             .HasConversion(
                 toDb => toDb.Id,
-                fromDb => global::Domain.Booking.Ид_бронирования.Create(fromDb)
+                fromDb => Ид_бронирования.Create(fromDb)
             );
 
         builder.Property(x => x.CustomerId)
             .HasColumnName("customer_id")
             .HasConversion(
                 toDb => toDb.Id,
-                fromDb => global::Domain.Booking.Ид_клиента.Create(fromDb)
+                fromDb => Ид_клиента.Create(fromDb)
             )
             .IsRequired();
 
@@ -30,7 +30,7 @@ public sealed class БронированиеEntityConfiguration : IEntityTypeCon
             .HasColumnName("equipment_id")
             .HasConversion(
                 toDb => toDb.Id,
-                fromDb => global::Domain.Booking.Ид_оборудования.Create(fromDb)
+                fromDb => Ид_оборудования.Create(fromDb)
             )
             .IsRequired();
 
@@ -62,6 +62,21 @@ public sealed class БронированиеEntityConfiguration : IEntityTypeCon
                     .HasColumnName("deposit_amount")
                     .IsRequired()
                     .HasPrecision(18, 2);
+            }
+        );
+
+        builder.ComplexProperty(
+            x => x.Статус,
+            cpb =>
+            {
+                cpb.ComplexProperty(
+                    s => s,
+                    statusBuilder =>
+                    {
+                        statusBuilder.Property(s => s.Key).HasColumnName("status_key").IsRequired();
+                        statusBuilder.Property(s => s.Name).HasColumnName("status_name").IsRequired();
+                    }
+                );
             }
         );
     }

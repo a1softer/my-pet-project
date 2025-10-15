@@ -62,13 +62,6 @@ public sealed class КлиентEntityConfiguration : IEntityTypeConfiguration<�
             }
         );
 
-        // Конфигурация для коллекции бронирований
-        builder.HasMany(x => x.Бронирование)
-            .WithOne()
-            .HasForeignKey("ClientId")
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasIndex(x => x.Email.Email).IsUnique();
         builder.HasIndex(x => x.Телефон.Номер).IsUnique();
     }

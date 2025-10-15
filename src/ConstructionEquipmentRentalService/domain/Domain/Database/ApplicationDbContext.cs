@@ -1,7 +1,7 @@
 ﻿using Domain.Booking;
 using Domain.Equipment;
 using Domain.Equipment.Database.Configurations;
-using Domain.Бронирование.Database.Configurations;
+using Domain.Booking.Database.Configurations;
 using Domain.Клиент;
 using Domain.Клиент.Database.Configurations;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,6 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new БронированиеEntityConfiguration());
         modelBuilder.ApplyConfiguration(new КлиентEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EquipmentEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new БронированиеКлиентаEntityConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

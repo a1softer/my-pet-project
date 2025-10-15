@@ -62,6 +62,12 @@ public sealed class КлиентEntityConfiguration : IEntityTypeConfiguration<�
             }
         );
 
+        builder.HasMany(x => x.Бронирование)
+            .WithOne(b => b.Клиент)
+            .HasForeignKey(b => b.CustomerId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasIndex(x => x.Email.Email).IsUnique();
         builder.HasIndex(x => x.Телефон.Номер).IsUnique();
     }

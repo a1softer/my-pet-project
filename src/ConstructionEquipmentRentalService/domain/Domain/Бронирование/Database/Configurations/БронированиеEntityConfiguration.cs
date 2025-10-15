@@ -79,5 +79,10 @@ public sealed class БронированиеEntityConfiguration : IEntityTypeCon
                 );
             }
         );
+
+        builder.HasOne(x => x.Клиент)
+            .WithMany(c => c.Бронирование)
+            .HasForeignKey(x => x.CustomerId)
+            .IsRequired();
     }
 }

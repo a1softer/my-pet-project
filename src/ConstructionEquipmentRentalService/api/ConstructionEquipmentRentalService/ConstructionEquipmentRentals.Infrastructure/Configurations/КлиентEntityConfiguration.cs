@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Клиент;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Domain.Клиент.Database.Configurations;
+namespace ConstructionEquipmentRentals.Infrastructure.Configurations;
 
 public sealed class КлиентEntityConfiguration : IEntityTypeConfiguration<Клиент>
 {

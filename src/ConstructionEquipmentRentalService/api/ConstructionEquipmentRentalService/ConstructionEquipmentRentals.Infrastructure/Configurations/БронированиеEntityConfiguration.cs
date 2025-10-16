@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Booking;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Domain.Booking.Database.Configurations;
+namespace ConstructionEquipmentRentals.Infrastructure.Configurations;
 
 public sealed class БронированиеEntityConfiguration : IEntityTypeConfiguration<Бронирование>
 {

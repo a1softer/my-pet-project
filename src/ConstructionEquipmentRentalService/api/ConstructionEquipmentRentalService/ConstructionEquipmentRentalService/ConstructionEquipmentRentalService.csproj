@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConstructionEquipmentRentals.Infrastructure\ConstructionEquipmentRentals.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

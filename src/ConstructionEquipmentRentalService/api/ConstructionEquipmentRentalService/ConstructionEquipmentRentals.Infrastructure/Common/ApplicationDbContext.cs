@@ -1,12 +1,10 @@
-﻿using Domain.Booking;
+﻿using ConstructionEquipmentRentals.Infrastructure.Configurations;
+using Domain.Booking;
 using Domain.Equipment;
-using Domain.Equipment.Database.Configurations;
-using Domain.Booking.Database.Configurations;
 using Domain.Клиент;
-using Domain.Клиент.Database.Configurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConstructionEquipmentRentals.Data;
+namespace ConstructionEquipmentRentals.Infrastructure.Common;
 
 public class ApplicationDbContext : DbContext
 {

@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Equipment;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Domain.Equipment.Database.Configurations;
+namespace ConstructionEquipmentRentals.Infrastructure.Configurations;
 
 public sealed class EquipmentEntityConfiguration : IEntityTypeConfiguration<Equipment>
 {

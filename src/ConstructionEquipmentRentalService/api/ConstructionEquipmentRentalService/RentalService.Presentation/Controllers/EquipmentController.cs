@@ -95,6 +95,7 @@ namespace RentalService.Presentation.Controllers
             }
         }
 
+        // Увеличение износа оборудования:
         [HttpPatch("{id:guid}/wear")]
         public IActionResult IncreaseWear(Guid id, [FromBody] IncreaseWearRequest request)
         {

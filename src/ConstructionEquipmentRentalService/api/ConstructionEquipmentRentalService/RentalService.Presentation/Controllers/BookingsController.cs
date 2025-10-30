@@ -99,6 +99,7 @@ namespace RentalService.Presentation.Controllers
             }
         }
 
+        // Окончание бронирования:
         [HttpPost("{id:guid}/complete")]
         public IActionResult CompleteBooking(Guid id)
         {

@@ -6,6 +6,9 @@ using RentalService.Common;
 
 namespace RentalService.Presentation.Controllers
 {
+    /// <summary>
+    /// Контроллер для управления бронированиями
+    /// </summary>
     [ApiController]
     [Route("api/bookings")]
     public class BookingsController : ControllerBase
@@ -14,25 +17,30 @@ namespace RentalService.Presentation.Controllers
         private static readonly List<Клиент> _clientStorage = new();
         private static readonly List<Equipment> _equipmentStorage = new();
 
+        /// <summary>
+        /// Создает новое бронирование
+        /// </summary>
+        /// <param name="request">Данные для создания бронирования</param>
+        /// <returns>Созданное бронирование</returns>
         [HttpPost]
-        public IActionResult CreateBooking([FromBody] CreateBookingRequest request)
+        public IResult CreateBooking([FromBody] CreateBookingRequest request)
         {
             try
             {
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == request.EquipmentId);
                 if (equipment is null)
-                    return NotFound(Envelope<BookingResponse>.Error("Оборудование не найдено"));
+                    return Envelope<BookingResponse>.Error("Оборудование не найдено");
 
                 var client = _clientStorage.FirstOrDefault(c => c.Id.Id == request.ClientId);
                 if (client is null)
-                    return NotFound(Envelope<BookingResponse>.Error("Клиент не найден"));
+                    return Envelope<BookingResponse>.Error("Клиент не найден");
 
                 var hasActiveBooking = _bookingStorage.Any(b =>
                     b.EquipmentId.Id == request.EquipmentId &&
                     b.Статус is not СтатусБронированияОтменено and not СтатусБронированияЗавершено);
 
                 if (hasActiveBooking)
-                    return BadRequest(Envelope<BookingResponse>.Error("Оборудование уже забронировано"));
+                    return Envelope<BookingResponse>.Error("Оборудование уже забронировано");
 
                 var bookingId = Ид_бронирования.CreateNew();
                 var equipmentId = Ид_оборудования.Create(request.EquipmentId);
@@ -60,26 +68,31 @@ namespace RentalService.Presentation.Controllers
                     booking.Статус.Name
                 );
 
-                return Ok(Envelope<BookingResponse>.Ok(response));
+                return Envelope<BookingResponse>.Ok(response);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(Envelope<BookingResponse>.Error(ex.Message));
+                return Envelope<BookingResponse>.Error(ex.Message);
             }
             catch (Exception)
             {
-                return StatusCode(500, Envelope<BookingResponse>.Error("Внутренняя ошибка сервера"));
+                return Envelope<BookingResponse>.Error("Внутренняя ошибка сервера");
             }
         }
 
+        /// <summary>
+        /// Получает бронирование по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор бронирования</param>
+        /// <returns>Бронирование</returns>
         [HttpGet("{id:guid}")]
-        public IActionResult GetById(Guid id)
+        public IResult GetById(Guid id)
         {
             try
             {
                 var booking = _bookingStorage.FirstOrDefault(b => b.Id.Id == id);
                 if (booking is null)
-                    return NotFound(Envelope<BookingResponse>.Error("Бронирование не найдено"));
+                    return Envelope<BookingResponse>.Error("Бронирование не найдено");
 
                 var response = new BookingResponse(
                     booking.Id.Id,
@@ -91,26 +104,37 @@ namespace RentalService.Presentation.Controllers
                     booking.Статус.Name
                 );
 
-                return Ok(Envelope<BookingResponse>.Ok(response));
+                return Envelope<BookingResponse>.Ok(response);
             }
             catch (Exception)
             {
-                return StatusCode(500, Envelope<BookingResponse>.Error("Внутренняя ошибка сервера"));
+                return Envelope<BookingResponse>.Error("Внутренняя ошибка сервера");
             }
         }
 
-        // Окончание бронирования:
+        /// <summary>
+        /// Завершает бронирование и рассчитывает износ оборудования
+        /// </summary>
+        /// <param name="id">Идентификатор бронирования</param>
+        /// <returns>Завершенное бронирование</returns>
         [HttpPost("{id:guid}/complete")]
-        public IActionResult CompleteBooking(Guid id)
+        public IResult CompleteBooking(Guid id)
         {
             try
             {
                 var booking = _bookingStorage.FirstOrDefault(b => b.Id.Id == id);
                 if (booking is null)
-                    return NotFound(Envelope<BookingResponse>.Error("Бронирование не найдено"));
+                    return Envelope<BookingResponse>.Error("Бронирование не найдено");
 
                 if (booking.Статус is СтатусБронированияЗавершено or СтатусБронированияОтменено)
-                    return BadRequest(Envelope<BookingResponse>.Error("Бронирование уже завершено или отменено"));
+                    return Envelope<BookingResponse>.Error("Бронирование уже завершено или отменено");
+
+                var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == booking.EquipmentId.Id);
+                if (equipment is null)
+                    return Envelope<BookingResponse>.Error("Оборудование не найдено");
+
+                var bookingDuration = (DateTime.Now - booking.StartDate.Date.ToDateTime(TimeOnly.MinValue)).TotalDays;
+                var wearIncrease = bookingDuration * 0.5;
 
                 var response = new BookingResponse(
                     booking.Id.Id,
@@ -122,17 +146,32 @@ namespace RentalService.Presentation.Controllers
                     "Завершено"
                 );
 
-                return Ok(Envelope<BookingResponse>.Ok(response));
+                return Envelope<BookingResponse>.Ok(response);
             }
             catch (Exception)
             {
-                return StatusCode(500, Envelope<BookingResponse>.Error("Внутренняя ошибка сервера"));
+                return Envelope<BookingResponse>.Error("Внутренняя ошибка сервера");
             }
         }
     }
 
+    /// <summary>
+    /// Запрос на создание бронирования
+    /// </summary>
+    /// <param name="EquipmentId">Идентификатор оборудования</param>
+    /// <param name="ClientId">Идентификатор клиента</param>
     public record CreateBookingRequest(Guid EquipmentId, Guid ClientId);
 
+    /// <summary>
+    /// Ответ с информацией о бронировании
+    /// </summary>
+    /// <param name="Id">Идентификатор</param>
+    /// <param name="EquipmentId">Идентификатор оборудования</param>
+    /// <param name="ClientId">Идентификатор клиента</param>
+    /// <param name="StartDate">Дата начала</param>
+    /// <param name="EndDate">Дата окончания</param>
+    /// <param name="DepositAmount">Сумма залога</param>
+    /// <param name="Status">Статус</param>
     public record BookingResponse(
         Guid Id,
         Guid EquipmentId,

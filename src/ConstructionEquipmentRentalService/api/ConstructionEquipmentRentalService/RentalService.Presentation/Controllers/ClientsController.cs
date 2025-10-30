@@ -4,14 +4,22 @@ using RentalService.Common;
 
 namespace RentalService.Presentation.Controllers
 {
+    /// <summary>
+    /// Контроллер для управления клиентами
+    /// </summary>
     [ApiController]
     [Route("api/clients")]
     public class ClientsController : ControllerBase
     {
         private static readonly List<Клиент> _clientStorage = new();
 
+        /// <summary>
+        /// Создает нового клиента
+        /// </summary>
+        /// <param name="request">Данные для создания клиента</param>
+        /// <returns>Созданный клиент</returns>
         [HttpPost]
-        public IActionResult CreateClient([FromBody] CreateClientRequest request)
+        public IResult CreateClient([FromBody] CreateClientRequest request)
         {
             try
             {
@@ -31,26 +39,31 @@ namespace RentalService.Presentation.Controllers
                     client.Телефон.Номер
                 );
 
-                return Ok(Envelope<ClientResponse>.Ok(response));
+                return Envelope<ClientResponse>.Ok(response);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(Envelope<ClientResponse>.Error(ex.Message));
+                return Envelope<ClientResponse>.Error(ex.Message);
             }
             catch (Exception)
             {
-                return StatusCode(500, Envelope<ClientResponse>.Error("Внутренняя ошибка сервера"));
+                return Envelope<ClientResponse>.Error("Внутренняя ошибка сервера");
             }
         }
 
+        /// <summary>
+        /// Получает клиента по идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор клиента</param>
+        /// <returns>Клиент</returns>
         [HttpGet("{id:guid}")]
-        public IActionResult GetById(Guid id)
+        public IResult GetById(Guid id)
         {
             try
             {
                 var client = _clientStorage.FirstOrDefault(c => c.Id.Id == id);
                 if (client is null)
-                    return NotFound(Envelope<ClientResponse>.Error("Клиент не найден"));
+                    return Envelope<ClientResponse>.Error("Клиент не найден");
 
                 var response = new ClientResponse(
                     client.Id.Id,
@@ -59,15 +72,22 @@ namespace RentalService.Presentation.Controllers
                     client.Телефон.Номер
                 );
 
-                return Ok(Envelope<ClientResponse>.Ok(response));
+                return Envelope<ClientResponse>.Ok(response);
             }
             catch (Exception)
             {
-                return StatusCode(500, Envelope<ClientResponse>.Error("Внутренняя ошибка сервера"));
+                return Envelope<ClientResponse>.Error("Внутренняя ошибка сервера");
             }
         }
     }
 
+    /// <summary>
+    /// Запрос на создание клиента
+    /// </summary>
+    /// <param name="ClientId">Идентификатор клиента</param>
+    /// <param name="FullName">ФИО клиента</param>
+    /// <param name="Address">Адрес клиента</param>
+    /// <param name="Phone">Контактный телефон</param>
     public record CreateClientRequest(
         Guid ClientId,
         string FullName,
@@ -75,6 +95,13 @@ namespace RentalService.Presentation.Controllers
         string Phone
     );
 
+    /// <summary>
+    /// Ответ с информацией о клиенте
+    /// </summary>
+    /// <param name="Id">Идентификатор</param>
+    /// <param name="FullName">ФИО</param>
+    /// <param name="Address">Адрес</param>
+    /// <param name="Phone">Телефон</param>
     public record ClientResponse(
         Guid Id,
         string FullName,

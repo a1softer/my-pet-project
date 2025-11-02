@@ -4,9 +4,7 @@ namespace Domain.Booking
 {
     public class Бронирование
     {
-        private readonly Domain.Equipment.Equipment _equipment;
-
-        public Бронирование(Ид_бронирования id, Ид_клиента customerId, Ид_оборудования equipmentId, Дата_начала startDate, Дата_окончания endDate, Сумма_залога depositAmount, Domain.Клиент.СтатусБронирования статус, Domain.Клиент.Клиент клиент, Domain.Equipment.Equipment equipment)
+        public Бронирование(Ид_бронирования id, Ид_клиента customerId, Ид_оборудования equipmentId, Дата_начала startDate, Дата_окончания endDate, Сумма_залога depositAmount, Domain.Клиент.СтатусБронирования статус, Domain.Клиент.Клиент клиент)
         {
             Id = id;
             CustomerId = customerId;
@@ -16,7 +14,6 @@ namespace Domain.Booking
             DepositAmount = depositAmount;
             Статус = статус;
             Клиент = клиент;
-            _equipment = equipment ?? throw new ArgumentNullException(nameof(equipment));
         }
 
         public Ид_бронирования Id { get; }
@@ -31,28 +28,40 @@ namespace Domain.Booking
         /// <summary>
         /// Завершает бронирование и применяет износ к оборудованию
         /// </summary>
+        /// <param name="equipment">Оборудование, связанное с бронированием</param>
         /// <returns>Было ли оборудование деактивировано из-за износа</returns>
-        public bool Complete()
+        public bool Complete(Domain.Equipment.Equipment equipment)
         {
+            if (equipment == null)
+                throw new ArgumentNullException(nameof(equipment));
+
             if (Статус is СтатусБронированияЗавершено or СтатусБронированияОтменено)
                 throw new InvalidOperationException("Бронирование уже завершено или отменено");
 
             var bookingDuration = (DateTime.Now - StartDate.Date.ToDateTime(TimeOnly.MinValue)).TotalDays;
 
-            _equipment.ApplyBookingWear(bookingDuration);
+            var wasActiveBefore = equipment.IsActive;
+            equipment.AcceptDeactivationBy(this, bookingDuration);
+            var wasDeactivated = wasActiveBefore && !equipment.IsActive;
 
             Статус = new СтатусБронированияЗавершено();
             EndDate = Дата_окончания.Create(DateOnly.FromDateTime(DateTime.Now), StartDate);
 
-            return !_equipment.IsActive;
+            return wasDeactivated;
         }
 
         /// <summary>
         /// Проверяет, можно ли создать бронирование для этого оборудования
         /// </summary>
-        public bool CanBeCreated()
+        /// <param name="equipment">Оборудование для проверки</param>
+        public bool CanBeCreated(Domain.Equipment.Equipment equipment)
         {
-            return _equipment.CanBeBooked() && Статус is not СтатусБронированияОтменено;
+            if (equipment == null)
+                return false;
+
+            return equipment.CanBeBooked() &&
+                   Статус is not СтатусБронированияОтменено &&
+                   equipment.Id.Id == EquipmentId.Id;
         }
     }
 }

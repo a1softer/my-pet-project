@@ -28,15 +28,15 @@ namespace RentalService.Presentation.Controllers
             try
             {
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == request.EquipmentId);
+                var client = _clientStorage.FirstOrDefault(c => c.Id.Id == request.ClientId);
+
                 if (equipment is null)
                     return Envelope<BookingResponse>.NotFound("Оборудование не найдено");
+                if (client is null)
+                    return Envelope<BookingResponse>.NotFound("Клиент не найден");
 
                 if (!equipment.CanBeBooked())
                     return Envelope<BookingResponse>.Conflict("Оборудование не может быть забронировано (изношено или неактивно)");
-
-                var client = _clientStorage.FirstOrDefault(c => c.Id.Id == request.ClientId);
-                if (client is null)
-                    return Envelope<BookingResponse>.NotFound("Клиент не найден");
 
                 var hasActiveBooking = _bookingStorage.Any(b =>
                     b.EquipmentId.Id == request.EquipmentId &&
@@ -57,9 +57,9 @@ namespace RentalService.Presentation.Controllers
 
                 var status = new СтатусБронированияПодтверждено();
 
-                var booking = new Бронирование(bookingId, clientId, equipmentId, startDate, endDate, depositAmount, status, client, equipment);
+                var booking = new Бронирование(bookingId, clientId, equipmentId, startDate, endDate, depositAmount, status, client);
 
-                if (!booking.CanBeCreated())
+                if (!booking.CanBeCreated(equipment))
                     return Envelope<BookingResponse>.Conflict("Невозможно создать бронирование для данного оборудования");
 
                 _bookingStorage.Add(booking);
@@ -137,10 +137,11 @@ namespace RentalService.Presentation.Controllers
                 if (booking is null)
                     return Envelope<BookingResponse>.NotFound("Бронирование не найдено");
 
-                var equipmentDeactivated = booking.Complete();
-
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == booking.EquipmentId.Id);
-                var equipmentIsActive = equipment?.IsActive ?? false;
+                if (equipment is null)
+                    return Envelope<BookingResponse>.NotFound("Оборудование не найдено");
+
+                var equipmentDeactivated = booking.Complete(equipment);
 
                 var response = new BookingResponse(
                     booking.Id.Id,
@@ -150,7 +151,7 @@ namespace RentalService.Presentation.Controllers
                     booking.EndDate.Date,
                     booking.DepositAmount.Amount,
                     booking.Статус.Name,
-                    equipmentIsActive
+                    equipment.IsActive
                 );
 
                 return Envelope<BookingResponse>.Ok(response);

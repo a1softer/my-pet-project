@@ -40,18 +40,19 @@ namespace RentalService.Presentation.Controllers
                     equipment.LastMaintenanceDate.Date,
                     equipment.Type.Name,
                     equipment.Model.Value,
-                    equipment.WearPrecentage.Procent
+                    equipment.WearPrecentage.Procent,
+                    equipment.IsActive
                 );
 
                 return Envelope<EquipmentResponse>.Ok(response);
             }
             catch (ArgumentException ex)
             {
-                return Envelope<EquipmentResponse>.Error(ex.Message);
+                return Envelope<EquipmentResponse>.BadRequest(ex.Message);
             }
             catch (Exception)
             {
-                return Envelope<EquipmentResponse>.Error("Внутренняя ошибка сервера");
+                return Envelope<EquipmentResponse>.InternalError("Внутренняя ошибка сервера");
             }
         }
 
@@ -67,7 +68,7 @@ namespace RentalService.Presentation.Controllers
             {
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == id);
                 if (equipment is null)
-                    return Envelope<EquipmentResponse>.Error("Оборудование не найдено");
+                    return Envelope<EquipmentResponse>.NotFound("Оборудование не найдено");
 
                 var response = new EquipmentResponse(
                     equipment.Id.Id,
@@ -75,14 +76,15 @@ namespace RentalService.Presentation.Controllers
                     equipment.LastMaintenanceDate.Date,
                     equipment.Type.Name,
                     equipment.Model.Value,
-                    equipment.WearPrecentage.Procent
+                    equipment.WearPrecentage.Procent,
+                    equipment.IsActive
                 );
 
                 return Envelope<EquipmentResponse>.Ok(response);
             }
             catch (Exception)
             {
-                return Envelope<EquipmentResponse>.Error("Внутренняя ошибка сервера");
+                return Envelope<EquipmentResponse>.InternalError("Внутренняя ошибка сервера");
             }
         }
 
@@ -101,14 +103,15 @@ namespace RentalService.Presentation.Controllers
                     e.LastMaintenanceDate.Date,
                     e.Type.Name,
                     e.Model.Value,
-                    e.WearPrecentage.Procent
+                    e.WearPrecentage.Procent,
+                    e.IsActive
                 )).ToList();
 
                 return Envelope<List<EquipmentResponse>>.Ok(responses);
             }
             catch (Exception)
             {
-                return Envelope<List<EquipmentResponse>>.Error("Внутренняя ошибка сервера");
+                return Envelope<List<EquipmentResponse>>.InternalError("Внутренняя ошибка сервера");
             }
         }
     }
@@ -138,12 +141,14 @@ namespace RentalService.Presentation.Controllers
     /// <param name="EquipmentType">Тип оборудования</param>
     /// <param name="Model">Модель</param>
     /// <param name="WearPercentage">Процент износа</param>
+    /// <param name="IsActive">Статус активности</param>
     public record EquipmentResponse(
         Guid Id,
         decimal RentalCost,
         DateOnly LastMaintenanceDate,
         string EquipmentType,
         string Model,
-        double WearPercentage
+        double WearPercentage,
+        bool IsActive
     );
 }

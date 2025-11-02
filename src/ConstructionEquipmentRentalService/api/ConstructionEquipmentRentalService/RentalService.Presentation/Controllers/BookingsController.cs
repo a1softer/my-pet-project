@@ -29,18 +29,18 @@ namespace RentalService.Presentation.Controllers
             {
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == request.EquipmentId);
                 if (equipment is null)
-                    return Envelope<BookingResponse>.Error("Оборудование не найдено");
+                    return Envelope<BookingResponse>.NotFound("Оборудование не найдено");
 
                 var client = _clientStorage.FirstOrDefault(c => c.Id.Id == request.ClientId);
                 if (client is null)
-                    return Envelope<BookingResponse>.Error("Клиент не найден");
+                    return Envelope<BookingResponse>.NotFound("Клиент не найден");
 
                 var hasActiveBooking = _bookingStorage.Any(b =>
                     b.EquipmentId.Id == request.EquipmentId &&
                     b.Статус is not СтатусБронированияОтменено and not СтатусБронированияЗавершено);
 
                 if (hasActiveBooking)
-                    return Envelope<BookingResponse>.Error("Оборудование уже забронировано");
+                    return Envelope<BookingResponse>.Conflict("Оборудование уже забронировано");
 
                 var bookingId = Ид_бронирования.CreateNew();
                 var equipmentId = Ид_оборудования.Create(request.EquipmentId);
@@ -65,18 +65,19 @@ namespace RentalService.Presentation.Controllers
                     booking.StartDate.Date,
                     booking.EndDate.Date,
                     booking.DepositAmount.Amount,
-                    booking.Статус.Name
+                    booking.Статус.Name,
+                    equipment.IsActive
                 );
 
                 return Envelope<BookingResponse>.Ok(response);
             }
             catch (ArgumentException ex)
             {
-                return Envelope<BookingResponse>.Error(ex.Message);
+                return Envelope<BookingResponse>.BadRequest(ex.Message);
             }
             catch (Exception)
             {
-                return Envelope<BookingResponse>.Error("Внутренняя ошибка сервера");
+                return Envelope<BookingResponse>.InternalError("Внутренняя ошибка сервера");
             }
         }
 
@@ -92,7 +93,10 @@ namespace RentalService.Presentation.Controllers
             {
                 var booking = _bookingStorage.FirstOrDefault(b => b.Id.Id == id);
                 if (booking is null)
-                    return Envelope<BookingResponse>.Error("Бронирование не найдено");
+                    return Envelope<BookingResponse>.NotFound("Бронирование не найдено");
+
+                var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == booking.EquipmentId.Id);
+                var equipmentIsActive = equipment?.IsActive ?? false;
 
                 var response = new BookingResponse(
                     booking.Id.Id,
@@ -101,14 +105,15 @@ namespace RentalService.Presentation.Controllers
                     booking.StartDate.Date,
                     booking.EndDate.Date,
                     booking.DepositAmount.Amount,
-                    booking.Статус.Name
+                    booking.Статус.Name,
+                    equipmentIsActive
                 );
 
                 return Envelope<BookingResponse>.Ok(response);
             }
             catch (Exception)
             {
-                return Envelope<BookingResponse>.Error("Внутренняя ошибка сервера");
+                return Envelope<BookingResponse>.InternalError("Внутренняя ошибка сервера");
             }
         }
 
@@ -124,17 +129,23 @@ namespace RentalService.Presentation.Controllers
             {
                 var booking = _bookingStorage.FirstOrDefault(b => b.Id.Id == id);
                 if (booking is null)
-                    return Envelope<BookingResponse>.Error("Бронирование не найдено");
+                    return Envelope<BookingResponse>.NotFound("Бронирование не найдено");
 
                 if (booking.Статус is СтатусБронированияЗавершено or СтатусБронированияОтменено)
-                    return Envelope<BookingResponse>.Error("Бронирование уже завершено или отменено");
+                    return Envelope<BookingResponse>.BadRequest("Бронирование уже завершено или отменено");
 
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == booking.EquipmentId.Id);
                 if (equipment is null)
-                    return Envelope<BookingResponse>.Error("Оборудование не найдено");
+                    return Envelope<BookingResponse>.NotFound("Оборудование не найдено");
 
                 var bookingDuration = (DateTime.Now - booking.StartDate.Date.ToDateTime(TimeOnly.MinValue)).TotalDays;
-                var wearIncrease = bookingDuration * 0.5;
+                var wearIncrease = Math.Max(1, bookingDuration * 0.5);
+
+                bool equipmentWasDeactivated = false;
+                if (equipment.WearPrecentage.Procent + wearIncrease >= 100)
+                {
+                    equipmentWasDeactivated = true;
+                }
 
                 var response = new BookingResponse(
                     booking.Id.Id,
@@ -143,14 +154,15 @@ namespace RentalService.Presentation.Controllers
                     booking.StartDate.Date,
                     DateOnly.FromDateTime(DateTime.Now),
                     booking.DepositAmount.Amount,
-                    "Завершено"
+                    "Завершено",
+                    !equipmentWasDeactivated
                 );
 
                 return Envelope<BookingResponse>.Ok(response);
             }
             catch (Exception)
             {
-                return Envelope<BookingResponse>.Error("Внутренняя ошибка сервера");
+                return Envelope<BookingResponse>.InternalError("Внутренняя ошибка сервера");
             }
         }
     }
@@ -172,6 +184,7 @@ namespace RentalService.Presentation.Controllers
     /// <param name="EndDate">Дата окончания</param>
     /// <param name="DepositAmount">Сумма залога</param>
     /// <param name="Status">Статус</param>
+    /// <param name="EquipmentIsActive">Статус активности оборудования</param>
     public record BookingResponse(
         Guid Id,
         Guid EquipmentId,
@@ -179,6 +192,7 @@ namespace RentalService.Presentation.Controllers
         DateOnly StartDate,
         DateOnly EndDate,
         decimal DepositAmount,
-        string Status
+        string Status,
+        bool EquipmentIsActive = true
     );
 }

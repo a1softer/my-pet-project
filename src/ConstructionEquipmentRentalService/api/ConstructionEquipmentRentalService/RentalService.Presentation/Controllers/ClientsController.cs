@@ -43,11 +43,11 @@ namespace RentalService.Presentation.Controllers
             }
             catch (ArgumentException ex)
             {
-                return Envelope<ClientResponse>.Error(ex.Message);
+                return Envelope<ClientResponse>.BadRequest(ex.Message);
             }
             catch (Exception)
             {
-                return Envelope<ClientResponse>.Error("Внутренняя ошибка сервера");
+                return Envelope<ClientResponse>.InternalError("Внутренняя ошибка сервера");
             }
         }
 
@@ -63,7 +63,7 @@ namespace RentalService.Presentation.Controllers
             {
                 var client = _clientStorage.FirstOrDefault(c => c.Id.Id == id);
                 if (client is null)
-                    return Envelope<ClientResponse>.Error("Клиент не найден");
+                    return Envelope<ClientResponse>.NotFound("Клиент не найден");
 
                 var response = new ClientResponse(
                     client.Id.Id,
@@ -76,7 +76,7 @@ namespace RentalService.Presentation.Controllers
             }
             catch (Exception)
             {
-                return Envelope<ClientResponse>.Error("Внутренняя ошибка сервера");
+                return Envelope<ClientResponse>.InternalError("Внутренняя ошибка сервера");
             }
         }
     }

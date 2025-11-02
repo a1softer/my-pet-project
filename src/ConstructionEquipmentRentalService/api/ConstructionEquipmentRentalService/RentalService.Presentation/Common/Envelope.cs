@@ -3,10 +3,13 @@ using System.Text.Json;
 
 namespace RentalService.Common;
 
-public sealed record Envelope<T>(T? Data, string? ErrorMessage) : IResult
+public sealed record Envelope<T>(T? Data, string? ErrorMessage, int StatusCode) : IResult
 {
-    public static Envelope<T> Ok(T data) => new(data, null);
-    public static Envelope<T> Error(string errorMessage) => new(default, errorMessage);
+    public static Envelope<T> Ok(T data) => new(data, null, StatusCodes.Status200OK);
+    public static Envelope<T> BadRequest(string errorMessage) => new(default, errorMessage, StatusCodes.Status400BadRequest);
+    public static Envelope<T> NotFound(string errorMessage) => new(default, errorMessage, StatusCodes.Status404NotFound);
+    public static Envelope<T> Conflict(string errorMessage) => new(default, errorMessage, StatusCodes.Status409Conflict);
+    public static Envelope<T> InternalError(string errorMessage) => new(default, errorMessage, StatusCodes.Status500InternalServerError);
 
     public async Task ExecuteAsync(HttpContext httpContext)
     {
@@ -14,19 +17,7 @@ public sealed record Envelope<T>(T? Data, string? ErrorMessage) : IResult
 
         response.ContentType = "application/json; charset=utf-8";
 
-        if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            response.StatusCode = ErrorMessage switch
-            {
-                string msg when msg.Contains("не найдено") || msg.Contains("не найден") => StatusCodes.Status404NotFound,
-                string msg when msg.Contains("уже завершено") || msg.Contains("уже забронировано") => StatusCodes.Status400BadRequest,
-                _ => StatusCodes.Status400BadRequest
-            };
-        }
-        else
-        {
-            response.StatusCode = StatusCodes.Status200OK;
-        }
+        response.StatusCode = StatusCode;
 
         var json = JsonSerializer.Serialize(this, new JsonSerializerOptions
         {

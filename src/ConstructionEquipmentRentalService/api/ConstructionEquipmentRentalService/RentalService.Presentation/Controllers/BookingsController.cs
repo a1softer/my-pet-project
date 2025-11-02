@@ -131,31 +131,24 @@ namespace RentalService.Presentation.Controllers
                 if (booking is null)
                     return Envelope<BookingResponse>.NotFound("Бронирование не найдено");
 
-                if (booking.Статус is СтатусБронированияЗавершено or СтатусБронированияОтменено)
-                    return Envelope<BookingResponse>.BadRequest("Бронирование уже завершено или отменено");
-
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == booking.EquipmentId.Id);
                 if (equipment is null)
                     return Envelope<BookingResponse>.NotFound("Оборудование не найдено");
 
-                var bookingDuration = (DateTime.Now - booking.StartDate.Date.ToDateTime(TimeOnly.MinValue)).TotalDays;
-                var wearIncrease = Math.Max(1, bookingDuration * 0.5);
+                var (completed, wearIncrease, equipmentDeactivated) = booking.Complete(equipment);
 
-                bool equipmentWasDeactivated = false;
-                if (equipment.WearPrecentage.Procent + wearIncrease >= 100)
-                {
-                    equipmentWasDeactivated = true;
-                }
+                if (!completed)
+                    return Envelope<BookingResponse>.BadRequest("Бронирование уже завершено или отменено");
 
                 var response = new BookingResponse(
                     booking.Id.Id,
                     booking.EquipmentId.Id,
                     booking.CustomerId.Id,
                     booking.StartDate.Date,
-                    DateOnly.FromDateTime(DateTime.Now),
+                    booking.EndDate.Date,
                     booking.DepositAmount.Amount,
-                    "Завершено",
-                    !equipmentWasDeactivated
+                    booking.Статус.Name,
+                    equipment.IsActive
                 );
 
                 return Envelope<BookingResponse>.Ok(response);

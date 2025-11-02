@@ -21,17 +21,26 @@
         public StateProcent WearPrecentage { get; private set; }
         public bool IsActive { get; private set; }
 
-        public void DeactivateIfWornOut()
+        /// <summary>
+        /// Увеличивает износ оборудования и деактивирует при достижении 100%
+        /// </summary>
+        /// <param name="amount">Количество износа для добавления</param>
+        public void IncreaseWear(double amount)
         {
-            if (WearPrecentage.Procent >= 100)
+            var newWear = WearPrecentage.Procent + amount;
+
+            if (newWear >= 100)
             {
                 IsActive = false;
             }
         }
 
-        public void IncreaseWear(double amount)
+        /// <summary>
+        /// Деактивирует оборудование (например, при критическом износе)
+        /// </summary>
+        public void Deactivate()
         {
-            DeactivateIfWornOut();
+            IsActive = false;
         }
     }
 }

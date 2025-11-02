@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Text.Json;
 
 namespace RentalService.Common;
 
@@ -14,17 +13,9 @@ public sealed record Envelope<T>(T? Data, string? ErrorMessage, int StatusCode) 
     public async Task ExecuteAsync(HttpContext httpContext)
     {
         var response = httpContext.Response;
-
         response.ContentType = "application/json; charset=utf-8";
-
         response.StatusCode = StatusCode;
 
-        var json = JsonSerializer.Serialize(this, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
-        });
-
-        await response.WriteAsync(json);
+        await response.WriteAsJsonAsync(this);
     }
 }

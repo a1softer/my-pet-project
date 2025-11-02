@@ -15,5 +15,10 @@
                 throw new ArgumentException("Процент износа должен быть в диапазоне от 0 до 100.");
             return new StateProcent(procent);
         }
+
+        /// <summary>
+        /// Проверяет, является ли износ критическим (>= 100%)
+        /// </summary>
+        public bool IsCritical() => Procent >= 100;
     }
 }

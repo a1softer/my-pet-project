@@ -31,6 +31,9 @@ namespace RentalService.Presentation.Controllers
                 if (equipment is null)
                     return Envelope<BookingResponse>.NotFound("Оборудование не найдено");
 
+                if (!equipment.CanBeBooked())
+                    return Envelope<BookingResponse>.Conflict("Оборудование не может быть забронировано (изношено или неактивно)");
+
                 var client = _clientStorage.FirstOrDefault(c => c.Id.Id == request.ClientId);
                 if (client is null)
                     return Envelope<BookingResponse>.NotFound("Клиент не найден");
@@ -54,7 +57,10 @@ namespace RentalService.Presentation.Controllers
 
                 var status = new СтатусБронированияПодтверждено();
 
-                var booking = new Бронирование(bookingId, clientId, equipmentId, startDate, endDate, depositAmount, status, client);
+                var booking = new Бронирование(bookingId, clientId, equipmentId, startDate, endDate, depositAmount, status, client, equipment);
+
+                if (!booking.CanBeCreated())
+                    return Envelope<BookingResponse>.Conflict("Невозможно создать бронирование для данного оборудования");
 
                 _bookingStorage.Add(booking);
 
@@ -131,14 +137,10 @@ namespace RentalService.Presentation.Controllers
                 if (booking is null)
                     return Envelope<BookingResponse>.NotFound("Бронирование не найдено");
 
+                var equipmentDeactivated = booking.Complete();
+
                 var equipment = _equipmentStorage.FirstOrDefault(e => e.Id.Id == booking.EquipmentId.Id);
-                if (equipment is null)
-                    return Envelope<BookingResponse>.NotFound("Оборудование не найдено");
-
-                var (completed, wearIncrease, equipmentDeactivated) = booking.Complete(equipment);
-
-                if (!completed)
-                    return Envelope<BookingResponse>.BadRequest("Бронирование уже завершено или отменено");
+                var equipmentIsActive = equipment?.IsActive ?? false;
 
                 var response = new BookingResponse(
                     booking.Id.Id,
@@ -148,10 +150,14 @@ namespace RentalService.Presentation.Controllers
                     booking.EndDate.Date,
                     booking.DepositAmount.Amount,
                     booking.Статус.Name,
-                    equipment.IsActive
+                    equipmentIsActive
                 );
 
                 return Envelope<BookingResponse>.Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Envelope<BookingResponse>.BadRequest(ex.Message);
             }
             catch (Exception)
             {

@@ -22,10 +22,20 @@
         public bool IsActive { get; private set; }
 
         /// <summary>
-        /// Увеличивает износ оборудования и деактивирует при достижении 100%
+        /// Высокоуровневая бизнес-логика: применение износа от завершения бронирования
+        /// </summary>
+        /// <param name="bookingDurationDays">Длительность бронирования в днях</param>
+        public void ApplyBookingWear(double bookingDurationDays)
+        {
+            var wearIncrease = Math.Max(1, bookingDurationDays * 0.5);
+            IncreaseWearInternal(wearIncrease);
+        }
+
+        /// <summary>
+        /// Низкоуровневая логика увеличения износа (приватная)
         /// </summary>
         /// <param name="amount">Количество износа для добавления</param>
-        public void IncreaseWear(double amount)
+        private void IncreaseWearInternal(double amount)
         {
             var newWear = WearPrecentage.Procent + amount;
 
@@ -36,11 +46,11 @@
         }
 
         /// <summary>
-        /// Деактивирует оборудование (например, при критическом износе)
+        /// Проверяет, можно ли забронировать оборудование
         /// </summary>
-        public void Deactivate()
+        public bool CanBeBooked()
         {
-            IsActive = false;
+            return IsActive && WearPrecentage.Procent < 100;
         }
     }
 }

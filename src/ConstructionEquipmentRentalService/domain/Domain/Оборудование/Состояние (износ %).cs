@@ -17,14 +17,8 @@
         }
 
         /// <summary>
-        /// Создает новый объект с увеличенным износом
+        /// Проверяет, является ли износ критическим (>= 100%)
         /// </summary>
-        /// <param name="amount">Количество для увеличения</param>
-        /// <returns>Новый объект StateProcent</returns>
-        public StateProcent Increase(double amount)
-        {
-            var newProcent = Procent + amount;
-            return Create(newProcent);
-        }
+        public bool IsCritical() => Procent >= 100;
     }
 }

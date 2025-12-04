@@ -1,7 +1,7 @@
 ﻿using Domain.Клиент.Contracts;
 using Domain.Клиент;
 
-namespace RentalService.Infrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class ClientRepository : ICanStoreClient
     {

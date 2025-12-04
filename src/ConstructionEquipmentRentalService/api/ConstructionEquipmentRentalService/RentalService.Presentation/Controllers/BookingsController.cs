@@ -17,6 +17,22 @@ namespace RentalService.Presentation.Controllers
         private static readonly List<Клиент> _clientStorage = new();
         private static readonly List<Equipment> _equipmentStorage = new();
 
+        [HttpPost("di-test")]
+        public IResult TestDependencyInjection()
+        {
+            return Results.Ok(new
+            {
+                message = "Dependency Injection готов к использованию",
+                implementedInterfaces = new[]
+                {
+            "ICanStoreBooking → BookingRepository",
+            "ICanStoreClient → ClientRepository",
+            "ICanStoreEquipment → EquipmentRepository"
+        },
+                applicationService = "BookingService создан в Application слое"
+            });
+        }
+
         /// <summary>
         /// Создает новое бронирование
         /// </summary>

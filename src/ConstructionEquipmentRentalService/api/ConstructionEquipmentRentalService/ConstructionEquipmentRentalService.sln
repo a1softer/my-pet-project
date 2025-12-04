@@ -31,6 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositorie
 		EquipmentRepository.cs = EquipmentRepository.cs
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E16572CC-0ED8-49ED-8C20-23193A4D7AFF}"
+	ProjectSection(SolutionItems) = preProject
+		BookingService.cs = BookingService.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +69,7 @@ Global
 		{72557EE0-374B-4023-B3A0-5FEE93EC1923} = {F1B6F138-9F66-4A6D-BFC9-E4B34B227FC9}
 		{C1458DC1-78E3-47A2-90DB-1E4F2A6ED15A} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{15E2108C-02EA-442C-BF67-58EE417CE5BD} = {9491663A-2BD4-4C40-A408-4CED9DAC9D55}
+		{E16572CC-0ED8-49ED-8C20-23193A4D7AFF} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9BB6FD64-7CED-4BFF-AC1C-254295F614CB}

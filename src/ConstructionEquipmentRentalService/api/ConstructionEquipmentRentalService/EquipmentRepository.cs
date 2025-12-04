@@ -1,7 +1,7 @@
 ﻿using Domain.Оборудование.Contracts;
 using Domain.Equipment;
 
-namespace RentalService.Infrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class EquipmentRepository : ICanStoreEquipment
     {

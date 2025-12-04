@@ -1,7 +1,7 @@
 ﻿using Domain.Бронирование.Contracts;
 using Domain.Booking;
 
-namespace RentalService.Infrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class BookingRepository : ICanStoreBooking
     {
@@ -9,13 +9,8 @@ namespace RentalService.Infrastructure.Repositories
 
         public Task SaveBooking(Бронирование booking)
         {
-            var existing = _storage.FirstOrDefault(b => b.Id.Id == booking.Id.Id);
-            if (existing != null)
-            {
-                _storage.Remove(existing);
-            }
             _storage.Add(booking);
-
+            Console.WriteLine($"Бронирование сохранено: {booking.Id.Id}");
             return Task.CompletedTask;
         }
     }

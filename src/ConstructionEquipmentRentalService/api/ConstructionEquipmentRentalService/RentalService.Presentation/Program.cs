@@ -9,7 +9,6 @@ builder.Services.AddSwaggerGen(c =>
     var xmlFile = "RentalService.Presentation.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
-
     c.EnableAnnotations();
 });
 

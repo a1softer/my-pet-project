@@ -19,21 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalService.Presentation", "RentalService.Presentation\RentalService.Presentation.csproj", "{72557EE0-374B-4023-B3A0-5FEE93EC1923}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CreateBooking", "CreateBooking", "{C1458DC1-78E3-47A2-90DB-1E4F2A6ED15A}"
-	ProjectSection(SolutionItems) = preProject
-		CreateBookingCommand.cs = CreateBookingCommand.cs
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{15E2108C-02EA-442C-BF67-58EE417CE5BD}"
 	ProjectSection(SolutionItems) = preProject
 		BookingRepository.cs = BookingRepository.cs
 		ClientRepository.cs = ClientRepository.cs
 		EquipmentRepository.cs = EquipmentRepository.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E16572CC-0ED8-49ED-8C20-23193A4D7AFF}"
-	ProjectSection(SolutionItems) = preProject
-		BookingService.cs = BookingService.cs
 	EndProjectSection
 EndProject
 Global
@@ -67,9 +57,7 @@ Global
 		{56B7C48A-C914-4334-B3CF-FC4EDA5D8205} = {9491663A-2BD4-4C40-A408-4CED9DAC9D55}
 		{43B407DC-1793-4F22-8AB4-613D24FB894E} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{72557EE0-374B-4023-B3A0-5FEE93EC1923} = {F1B6F138-9F66-4A6D-BFC9-E4B34B227FC9}
-		{C1458DC1-78E3-47A2-90DB-1E4F2A6ED15A} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{15E2108C-02EA-442C-BF67-58EE417CE5BD} = {9491663A-2BD4-4C40-A408-4CED9DAC9D55}
-		{E16572CC-0ED8-49ED-8C20-23193A4D7AFF} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9BB6FD64-7CED-4BFF-AC1C-254295F614CB}

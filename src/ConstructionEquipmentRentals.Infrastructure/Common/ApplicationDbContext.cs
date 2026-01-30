@@ -32,6 +32,5 @@ public sealed class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new КлиентEntityConfiguration());
         modelBuilder.ApplyConfiguration(new EquipmentEntityConfiguration());
 
-        base.OnModelCreating(modelBuilder);
     }
 }

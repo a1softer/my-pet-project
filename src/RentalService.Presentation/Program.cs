@@ -1,38 +1,42 @@
 using ConstructionEquipmentRentals.Infrastructure.Common;
 using ConstructionEquipmentRentals.Infrastructure.Common.Configurations;
+using Microsoft.Extensions.Options;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.json");
+builder
+    .Services.AddOptions<PostgresConnectionOptions>()
+    .BindConfiguration(nameof(PostgresConnectionOptions));
 
-var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-var section = config.GetSection("PostgresConnectionOptions");
-
-builder.Services.AddControllers();
-builder.Services.AddOptions<PostgresConnectionOptions>(nameof(PostgresConnectionOptions)).BindConfiguration(nameof(PostgresConnectionOptions));
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddControllers(); // fix #1 не было контроллеров, из-за этого был краш проги при app.MapControllers();
+
 builder.Services.AddScoped<ApplicationDbContext>();
 
 builder.Services.AddSwaggerGen(c =>
 {
-    var xmlFile = "RentalService.Presentation.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    string xmlFile = "RentalService.Presentation.xml";
+    string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
     c.EnableAnnotations();
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
+await using AsyncServiceScope scope = app.Services.CreateAsyncScope();
 
+IOptions<PostgresConnectionOptions> opts = scope.ServiceProvider.GetRequiredService<
+    IOptions<PostgresConnectionOptions>
+>();
 
-await using var scope = app.Services.CreateAsyncScope();
-
-
-
-var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+await using ApplicationDbContext dbContext =
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
 app.MapControllers();
+
 app.UseSwagger();
+
 app.UseSwaggerUI();
 
 app.Run();

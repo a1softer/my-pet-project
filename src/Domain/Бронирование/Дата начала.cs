@@ -2,6 +2,11 @@
 {
     public class Дата_начала
     {
+        private Дата_начала()
+        {
+
+        }
+
         public DateOnly Date { get; }
 
         private Дата_начала(DateOnly date)

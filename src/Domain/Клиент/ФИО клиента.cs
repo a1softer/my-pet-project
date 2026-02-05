@@ -2,6 +2,11 @@
 {
     public record ФИО_клиента
     {
+        private ФИО_клиента()
+        {
+
+        }
+
         public string Значние { get; }
 
         private ФИО_клиента(string значение)

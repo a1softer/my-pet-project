@@ -2,6 +2,11 @@
 {
     public record Адрес_клиента
     {
+        private Адрес_клиента()
+        {
+
+        }
+
         public string Значение { get; }
 
         private Адрес_клиента(string значение)

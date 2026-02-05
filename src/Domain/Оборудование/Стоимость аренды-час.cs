@@ -2,6 +2,11 @@
 {
     public sealed record RentalCost
     {
+        private RentalCost()
+        {
+
+        }
+
         public decimal Value { get; }
 
         private RentalCost(decimal value)

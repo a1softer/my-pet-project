@@ -35,36 +35,51 @@ public sealed class БронированиеEntityConfiguration : IEntityTypeCon
             )
             .IsRequired();
 
-        builder.ComplexProperty(
-            x => x.StartDate,
-            cpb =>
-            {
-                cpb.Property(s => s.Date)
-                    .HasColumnName("start_date")
-                    .IsRequired();
-            }
-        );
+        builder.Property(x => x.StartDate).HasColumnName("start_date")
+            .IsRequired().HasConversion(toDb => toDb.Date, fromDb => Дата_начала.Create(fromDb));
 
-        builder.ComplexProperty(
-            x => x.EndDate,
-            cpb =>
-            {
-                cpb.Property(s => s.Date)
-                    .HasColumnName("end_date")
-                    .IsRequired();
-            }
-        );
 
-        builder.ComplexProperty(
-            x => x.DepositAmount,
-            cpb =>
-            {
-                cpb.Property(s => s.Amount)
-                    .HasColumnName("deposit_amount")
-                    .IsRequired()
-                    .HasPrecision(18, 2);
-            }
-        );
+
+        //builder.ComplexProperty(
+        //    x => x.StartDate,
+        //    cpb =>
+        //    {
+        //        cpb.Property(s => s.Date)
+        //            .HasColumnName("start_date")
+        //            .IsRequired();
+        //    }
+        //);
+
+        builder.Property(x => x.EndDate)
+            .HasColumnName("end_date")
+            .IsRequired()
+            .HasConversion(toDb => toDb.Date, fromDb => Дата_окончания.Create(fromDb));
+
+
+
+        //builder.ComplexProperty(
+        //    x => x.EndDate,
+        //    cpb =>
+        //    {
+        //        cpb.Property(s => s.Date)
+        //            .HasColumnName("end_date")
+        //            .IsRequired();
+        //    }
+        //);
+
+        builder.Property(
+            x => x.DepositAmount).IsRequired().HasColumnName("deposit_amount").HasConversion(toDb => toDb.Amount, fromDb => Сумма_залога.Create(fromDb));
+
+        //builder.ComplexProperty(
+        //    x => x.DepositAmount,
+        //    cpb =>
+        //    {
+        //        cpb.Property(s => s.Amount)
+        //            .HasColumnName("deposit_amount")
+        //            .IsRequired()
+        //            .HasPrecision(18, 2);
+        //    }
+        //);
 
         builder.ComplexProperty(
             x => x.Статус,

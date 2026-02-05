@@ -2,6 +2,11 @@
 {
     public sealed record EquipmentModel
     {
+        private EquipmentModel()
+        {
+
+        }
+
         public string Value { get; }
 
         private EquipmentModel(string value)

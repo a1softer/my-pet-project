@@ -4,6 +4,11 @@ namespace Domain.Клиент
 {
     public record Почта
     {
+        private Почта()
+        {
+
+        }
+
         public string Email { get; }
 
         // Статическое регулярное выражение для email

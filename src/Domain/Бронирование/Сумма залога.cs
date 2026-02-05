@@ -9,6 +9,12 @@
             Amount = amount;
         }
 
+        public static Сумма_залога Create(decimal amount)
+        {
+           
+            return new Сумма_залога(amount);
+        }
+
         public static Сумма_залога Create(decimal amount, decimal rentalCostPerDay, int days)
         {
             decimal expectedDeposit = rentalCostPerDay * days * 0.3m;

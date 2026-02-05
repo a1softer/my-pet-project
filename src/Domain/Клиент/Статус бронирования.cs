@@ -2,14 +2,23 @@
 
 namespace Domain.Клиент
 {
-    public abstract class СтатусБронирования : Enumeration<СтатусБронирования>
+    public class СтатусБронирования : Enumeration<СтатусБронирования>
     {
         protected СтатусБронирования(int key, string name)
             : base(key, name) { }
 
-        public abstract bool МожноОтменить();
-        public abstract bool МожноПодтвердить();
-        public abstract string ПолучитьЦвет();
+        public virtual bool МожноОтменить()
+        {
+            return false;
+        }
+        public virtual bool МожноПодтвердить()
+        {
+            return false;
+        }
+        public virtual string ПолучитьЦвет()
+        {
+            return string.Empty;
+        }
     }
 
     public sealed class СтатусБронированияВОжидании : СтатусБронирования

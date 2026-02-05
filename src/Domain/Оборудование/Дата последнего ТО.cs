@@ -2,6 +2,11 @@
 {
     public class LastDateTO
     {
+        private LastDateTO() 
+        {
+            
+        }
+
         public DateOnly Date { get; }
 
         private LastDateTO(DateOnly date)

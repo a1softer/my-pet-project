@@ -2,6 +2,11 @@
 {
     public class Equipment
     {
+        private Equipment()
+        {
+
+        }
+
         public Equipment(IDEquipment id, RentalCost rentalCostPerHour, EquipmentModel model, ТипОборудования type, LastDateTO lastMaintenanceDate, StateProcent wearPrecentage)
         {
             Id = id;

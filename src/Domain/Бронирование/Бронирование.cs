@@ -4,6 +4,11 @@ namespace Domain.Booking
 {
     public class Бронирование
     {
+        private Бронирование()
+        {
+            
+        }
+
         public Бронирование(Ид_бронирования id, Ид_клиента customerId, Ид_оборудования equipmentId, Дата_начала startDate, Дата_окончания endDate, Сумма_залога depositAmount, Domain.Клиент.СтатусБронирования статус, Domain.Клиент.Клиент клиент)
         {
             Id = id;

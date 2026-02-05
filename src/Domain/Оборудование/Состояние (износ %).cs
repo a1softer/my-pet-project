@@ -2,6 +2,11 @@
 {
     public class StateProcent
     {
+        private StateProcent()
+        {
+
+        }
+
         public double Procent { get; }
 
         private StateProcent(double procent)

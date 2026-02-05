@@ -63,7 +63,7 @@ namespace RentalService.Presentation.Controllers
 
                 var bookingId = Ид_бронирования.CreateNew();
                 var equipmentId = Ид_оборудования.Create(request.EquipmentId);
-                var clientId = Domain.Booking.Ид_клиента.Create(request.ClientId);
+                var clientId = Ид_клиента.Create(request.ClientId);
                 var startDate = Дата_начала.CreateToday();
                 var endDate = Дата_окончания.Create(startDate.Date.AddDays(7), startDate);
 

@@ -1,6 +1,9 @@
 using ConstructionEquipmentRentals.Infrastructure.Common;
 using ConstructionEquipmentRentals.Infrastructure.Common.Configurations;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Options;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -26,12 +29,18 @@ WebApplication app = builder.Build();
 
 await using AsyncServiceScope scope = app.Services.CreateAsyncScope();
 
-IOptions<PostgresConnectionOptions> opts = scope.ServiceProvider.GetRequiredService<
-    IOptions<PostgresConnectionOptions>
->();
-
-await using ApplicationDbContext dbContext =
+using ApplicationDbContext dbContext =
     scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+try
+{
+    await dbContext.Database.MigrateAsync();
+    Console.WriteLine("migrations applied");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Migrations applied {ex.Message}");
+}
 
 app.MapControllers();
 

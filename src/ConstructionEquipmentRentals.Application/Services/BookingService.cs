@@ -75,7 +75,7 @@ namespace Application.Services
         {
             var bookingId = Ид_бронирования.CreateNew();
             var equipmentId = Ид_оборудования.Create(equipment.Id.Id);
-            var clientIdDomain = Domain.Booking.Ид_клиента.Create(client.Id.Id);
+            var clientIdDomain = Ид_клиента.Create(client.Id.Id);
             var startDate = Дата_начала.CreateToday();
             var endDate = Дата_окончания.Create(startDate.Date.AddDays(7), startDate);
 

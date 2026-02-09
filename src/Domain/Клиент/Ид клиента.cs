@@ -4,6 +4,11 @@
     {
         public Guid Id { get; }
 
+        public Ид_клиента()
+        {
+            Id = Guid.NewGuid();
+        }
+
         private Ид_клиента(Guid id)
         {
             Id = id;

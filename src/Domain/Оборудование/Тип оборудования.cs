@@ -1,14 +1,21 @@
 ﻿using Domain.Shared;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Domain.Equipment
 {
-    public abstract class ТипОборудования: Enumeration<ТипОборудования>
+    public class ТипОборудования: Enumeration<ТипОборудования>
     {
         protected ТипОборудования(int key, string name)
             : base(key, name) { }
 
-        public abstract decimal РассчитатьКоэффициентСтоимости();
-        public abstract int МаксимальныйСрокАрендыВДнях();
+        public virtual decimal РассчитатьКоэффициентСтоимости()
+        {
+            return 0;
+        }
+        public virtual int МаксимальныйСрокАрендыВДнях()
+        {
+            return 0;
+        }
     }
 
     public sealed class ТипОборудованияЭкскаватор : ТипОборудования

@@ -1,6 +1,7 @@
 ﻿using Domain.Equipment;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace ConstructionEquipmentRentals.Infrastructure.Configurations;
 
@@ -19,64 +20,50 @@ public sealed class EquipmentEntityConfiguration : IEntityTypeConfiguration<Equi
                 fromDb => IDEquipment.Create(fromDb)
             );
 
-        builder.ComplexProperty(
-            x => x.RentalCostPerHour,
-            cpb =>
-            {
-                cpb.Property(r => r.Value)
+        builder.Property(x => x.RentalCostPerHour)
                     .HasColumnName("rental_cost_per_hour")
+                    .HasConversion(
+            x => x.Value,
+            x => RentalCost.Create(x)
+            )
                     .IsRequired()
                     .HasPrecision(18, 2);
-            }
-        );
 
-        builder.ComplexProperty(
-            x => x.Model,
-            cpb =>
-            {
-                cpb.Property(m => m.Value)
+        builder.Property(x => x.Model)
                     .HasColumnName("model")
+                    .HasConversion(
+            x => x.Value,
+            x => EquipmentModel.Create(x)
+            )
                     .IsRequired()
                     .HasMaxLength(100);
-            }
-        );
 
         builder.ComplexProperty(
             x => x.Type,
             cpb =>
             {
-                cpb.ComplexProperty(
-                    t => t,
-                    typeBuilder =>
-                    {
-                        typeBuilder.Property(t => t.Key).HasColumnName("type_key").IsRequired();
-                        typeBuilder.Property(t => t.Name).HasColumnName("type_name").IsRequired();
-                    }
-                );
+                cpb.Property(t => t.Key).HasColumnName("type_key").IsRequired();
+                cpb.Property(t => t.Name).HasColumnName("type_name").IsRequired();
             }
         );
 
-        builder.ComplexProperty(
-            x => x.LastMaintenanceDate,
-            cpb =>
-            {
-                cpb.Property(l => l.Date)
+        builder.Property(x => x.LastMaintenanceDate)
                     .HasColumnName("last_maintenance_date")
+                    .HasConversion(
+            x => x.Date,
+            x => LastDateTO.Create(x)
+            )
                     .IsRequired();
-            }
-        );
 
-        builder.ComplexProperty(
-            x => x.WearPrecentage,
-            cpb =>
-            {
-                cpb.Property(w => w.Procent)
+
+        builder.Property(x => x.WearPrecentage)
                     .HasColumnName("wear_percentage")
+                    .HasConversion(
+            x => x.Procent,
+            x => StateProcent.Create(x)
+            )
                     .IsRequired();
-            }
-        );
 
-        builder.HasIndex(x => x.Model.Value);
-        builder.HasIndex(x => x.Type.Key);
+        //builder.HasIndex(x => x.Model);
     }
 }

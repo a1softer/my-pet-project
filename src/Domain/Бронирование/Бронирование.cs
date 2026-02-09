@@ -1,4 +1,5 @@
-﻿using Domain.Клиент;
+﻿using Domain.Бронирование;
+using Domain.Клиент;
 
 namespace Domain.Booking
 {

@@ -1,0 +1,31 @@
+{
+    "csharp-dev-tools.entityFramework.migrationPreferences": {
+        "ConstructionEquipmentRentalService.sln": {
+            "startupProject": "RentalService.Presentation\\RentalService.Presentation.csproj",
+            "migrationsProject": "ConstructionEquipmentRentals.Infrastructure\\ConstructionEquipmentRentals.Infrastructure.csproj",
+            "dbContextClass": "",
+            "migrationsFolder": "Migrations"
+        }
+    },
+    "dbcode.connections": [
+        {
+            "connectionId": "CAk2_bx4y_jNiI_CiEfX7",
+            "name": "Andrey",
+            "driver": "postgres",
+            "color": "#BD0014",
+            "connectionType": "host",
+            "host": "127.0.0.1",
+            "port": 5645,
+            "ssl": false,
+            "authMethod": "password",
+            "username": "user",
+            "password": "",
+            "savePassword": "secretStorage",
+            "database": "database",
+            "readOnly": false,
+            "postConnectionSqlType": "inline",
+            "connectionTimeout": 30,
+            "pinnedConnectionTimeout": "0"
+        }
+    ]
+}
